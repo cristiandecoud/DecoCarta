@@ -2,60 +2,57 @@
 interface Props {
 	title: string;
 	body: string;
-	href: string;
+	img: string[];
 }
 
-const { href, title, body } = Astro.props;
+const { img, title, body } = Astro.props;
 ---
+<div class="card">
+	<div class="layer layer-one">
+		<img src={img[0]}  alt="">
+	</div>
+	<div class="layer layer-two">
+		<img src={img[1]} alt="">
+	<div/>
+</div>
 
-<li class="link-card">
-	<a href={href}>
-		<h2>
-			{title}
-			<span>&rarr;</span>
-		</h2>
-		<p>
-			{body}
-		</p>
-	</a>
-</li>
 <style>
-	.link-card {
-		list-style: none;
-		display: flex;
-		padding: 1px;
-		background-color: #23262d;
-		background-image: none;
-		background-size: 400%;
-		border-radius: 7px;
-		background-position: 100%;
-		transition: background-position 0.6s cubic-bezier(0.22, 1, 0.36, 1);
-		box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1);
-	}
-	.link-card > a {
+	img {
 		width: 100%;
-		text-decoration: none;
-		line-height: 1.4;
-		padding: calc(1.5rem - 1px);
-		border-radius: 8px;
-		color: white;
-		background-color: #23262d;
-		opacity: 0.8;
+		height: 100%;
+		border-radius: 5px;
 	}
-	h2 {
-		margin: 0;
-		font-size: 1.25rem;
-		transition: color 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+
+	.card {
+		position: relative;
+		width: 300px;
+		aspect-ratio: 1/1.68;
+
+
+		transition:                  transform 0.5s;
+		transform-style: preserve-3d;
 	}
-	p {
-		margin-top: 0.5rem;
-		margin-bottom: 0;
+
+	.card:hover {
+		transform: rotate3d( 1, 1, 0.1, 20deg );
 	}
-	.link-card:is(:hover, :focus-within) {
-		background-position: 0;
-		background-image: var(--accent-gradient);
+
+	.layer {
+		position: absolute;
+		width: 100%;
+		height: 100%;
+		border:  1px solid #a5a5a5; 
+		border-radius: 10px;
+		padding: 5px;
 	}
-	.link-card:is(:hover, :focus-within) h2 {
-		color: rgb(var(--accent-light));
+
+	.layer-one {
+		background-color: rgba(255, 255, 255, 0.158);
+
+	}
+
+	.layer-two {
+		transform: translateZ(15px);
+		filter: drop-shadow(8px 8px 8px #000000e1);
 	}
 </style>
