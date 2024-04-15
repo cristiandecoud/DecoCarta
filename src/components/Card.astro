@@ -1,58 +1,116 @@
 ---
-interface Props {
-	title: string;
-	body: string;
-	img: string[];
+export interface Props {
+  title: string;
+  body: string;
+  layers: string[];
 }
 
-const { img, title, body } = Astro.props;
+export interface Dimensions {
+	top: number;
+	bottom: number;
+	right: number;
+	left: number;
+	vMedium: number;
+	hMedium: number;
+}
+
+const { layers, title, body } = Astro.props;
 ---
-<div class="card">
-	<div class="layer layer-one">
-		<img src={img[0]}  alt="">
+<div id="wrapper">
+	<div class="card" id="card">
+		<div class="layer layer-one">
+			<img src={layers[0]} />
+		</div>
+		<div class="layer layer-two">
+			<img src={layers[1]} />
+		</div>
+		<div class="layer layer-three">
+			<img src={layers[2]} />
+		</div>
 	</div>
-	<div class="layer layer-two">
-		<img src={img[1]} alt="">
-	<div/>
 </div>
 
+<script>
+import type { Dimensions } from "./Card.astro";
+
+	let wrapper = document.getElementById("wrapper");
+	let card = document.getElementById("card");
+	let rect = wrapper?.getBoundingClientRect();
+
+	let dim = rect && calculateDimension(rect);
+console.log(dim)
+	document.getElementById("wrapper")?.addEventListener("mouseover", (event: MouseEvent) => {
+		const target = event.target;
+		document.onmousemove = (event) => {
+			let x = event.x;
+			let y = event.y;
+			if(card) card.style.transform = `rotate3d(${(x-390)/10}, ${(y-276)/10}, ${0.2}, 25deg)`;
+		};
+	})
+
+
+
+	function calculateDimension(rect: DOMRect): Dimensions {
+		const { top, bottom, right, left } = rect;
+
+		return {
+			top, bottom, right, left, 
+			hMedium: (left + right)/2, 
+			vMedium: (top + bottom)/2
+		};
+	}
+
+	function isInside(dim: Dimensions, mouse: {x: number, y: number}) {
+		return (dim.left < mouse.x && mouse.x < dim.right) && (dim.top < mouse.y && mouse.y < dim.bottom);
+	}
+</script>
 <style>
-	img {
-		width: 100%;
-		height: 100%;
-		border-radius: 5px;
-	}
+  img {
+    width: 100%;
+    height: 100%;
+    border-radius: 5px;
+  }
 
-	.card {
-		position: relative;
+	#wrapper {
 		width: 300px;
-		aspect-ratio: 1/1.68;
-
-
-		transition:                  transform 0.5s;
-		transform-style: preserve-3d;
+    aspect-ratio: 1/1.68;
 	}
 
-	.card:hover {
-		transform: rotate3d( 1, 1, 0.1, 20deg );
-	}
+	/* #wrapper:hover {  
+		.card {
+    	transform: rotate3d(1, 1, 0.1, 25deg);
+  	}
+	} */
 
-	.layer {
-		position: absolute;
-		width: 100%;
-		height: 100%;
-		border:  1px solid #a5a5a5; 
-		border-radius: 10px;
-		padding: 5px;
-	}
+  .card {
+    width: 300px;
+    aspect-ratio: 1/1.68;
+		position: relative;
+    transform-style: preserve-3d;
+  }
 
-	.layer-one {
-		background-color: rgba(255, 255, 255, 0.158);
 
-	}
 
-	.layer-two {
-		transform: translateZ(15px);
-		filter: drop-shadow(8px 8px 8px #000000e1);
-	}
+  .layer {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border: 1px solid #a5a5a5;
+    border-radius: 10px;
+    padding: 5px;
+  }
+
+  .layer-one {
+    background-color: rgba(255, 255, 255, 0.158);
+  }
+
+  .layer-two {
+    transform: translateZ(15px);
+    filter: drop-shadow(8px 8px 8px #000000e1);
+  }
+
+  .layer-three {
+    transform: translateZ(30px);
+    filter: drop-shadow(8px 8px 8px #000000e1);
+  }
 </style>
