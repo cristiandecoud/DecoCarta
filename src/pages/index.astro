@@ -2,6 +2,9 @@
 import Layout from '../layouts/Layout.astro';
 import Card from '../components/Card.astro';
 const img = ["/montanas.jpg","/goku.png", "/rayos.png"]
+const conf = {
+	cardWidth: 45
+}
 ---
 
 <Layout title="DecoCarta">
@@ -10,6 +13,7 @@ const img = ["/montanas.jpg","/goku.png", "/rayos.png"]
 			layers={img}
 			title="Goku"
 			body=""
+			conf={conf}
 		/>
 	</main>
 </Layout>

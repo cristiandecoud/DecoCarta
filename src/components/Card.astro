@@ -1,57 +1,76 @@
 ---
 export interface Props {
-  title: string;
-  body: string;
-  layers: string[];
+	conf: {cardWidth: number}
+  body: string
+  layers: string[]
+  title: string
 }
 
 export interface Dimensions {
-	top: number;
-	bottom: number;
-	right: number;
-	left: number;
-	vMedium: number;
-	hMedium: number;
+	bottom: number
+	hMedium: number
+	left: number
+	right: number
+	top: number
+	vMedium: number
 }
 
-const { layers, title, body } = Astro.props;
+const { layers, title, body, conf } = Astro.props;
+let gap = 15;
+let numberLayers = 0;
+const cardWidth = conf.cardWidth
+
+function countLayers(layers: string[]): number {
+	return layers.length;
+}
+
+function setGap(numberOfLayers: number, cardWidth: number): number {
+	return cardWidth / numberOfLayers
+}
+
+function setLayerSeparation(index: number) {
+	return  `transform: translateZ(${index*gap}px)`
+}
+
+numberLayers = countLayers(layers)
+gap = setGap(numberLayers, cardWidth)
 ---
 <div id="wrapper">
 	<div class="card" id="card">
-		<div class="layer layer-one">
-			<img src={layers[0]} />
-		</div>
-		<div class="layer layer-two">
-			<img src={layers[1]} />
-		</div>
-		<div class="layer layer-three">
-			<img src={layers[2]} />
-		</div>
+
+		{layers.map((data, i) => 
+			<div class='layer' style={setLayerSeparation(i)}>
+				<img src={layers[i]} />
+			</div>
+		)}
+		<div class="left side"></div>
+		<div class="right side"></div> 
+		<div class="top side"></div>
+		<div class="bottom side"></div> 
 	</div>
 </div>
 
 <script>
-import type { Dimensions } from "./Card.astro";
+	import type { Dimensions } from "./Card.astro"
 
-	let wrapper = document.getElementById("wrapper");
-	let card = document.getElementById("card");
-	let rect = wrapper?.getBoundingClientRect();
+	let wrapper = document.getElementById("wrapper")
+	let card = document.getElementById("card")
+	let rect = wrapper?.getBoundingClientRect()
 
-	let dim = rect && calculateDimension(rect);
-console.log(dim)
+	let dim = rect && calculateDimension(rect)
 	document.getElementById("wrapper")?.addEventListener("mouseover", (event: MouseEvent) => {
-		const target = event.target;
+		const target = event.target
 		document.onmousemove = (event) => {
-			let x = event.x;
-			let y = event.y;
-			if(card) card.style.transform = `rotate3d(${(x-390)/10}, ${(y-276)/10}, ${0.2}, 25deg)`;
+			let x = event.x
+			let y = event.y
+			if(card) card.style.transform = `rotate3d(${(x-390)/10}, ${(y-276)/10}, ${0.2}, 25deg)`
 		};
 	})
 
 
 
 	function calculateDimension(rect: DOMRect): Dimensions {
-		const { top, bottom, right, left } = rect;
+		const { top, bottom, right, left } = rect
 
 		return {
 			top, bottom, right, left, 
@@ -61,56 +80,77 @@ console.log(dim)
 	}
 
 	function isInside(dim: Dimensions, mouse: {x: number, y: number}) {
-		return (dim.left < mouse.x && mouse.x < dim.right) && (dim.top < mouse.y && mouse.y < dim.bottom);
+		return (dim.left < mouse.x && mouse.x < dim.right) && (dim.top < mouse.y && mouse.y < dim.bottom)
 	}
 </script>
 <style>
-  img {
-    width: 100%;
-    height: 100%;
-    border-radius: 5px;
-  }
-
 	#wrapper {
 		width: 300px;
-    aspect-ratio: 1/1.68;
+		height: 504px
+		/* aspect-ratio: 1/1.68; */
+		perspective: 50px;
 	}
-
-	/* #wrapper:hover {  
-		.card {
-    	transform: rotate3d(1, 1, 0.1, 25deg);
-  	}
-	} */
-
-  .card {
-    width: 300px;
+	
+	.card {
+		width: 100%;
+		/* height: 100%; */
     aspect-ratio: 1/1.68;
 		position: relative;
     transform-style: preserve-3d;
   }
 
+	.layer {
+		box-sizing: border-box;
+		position: absolute;
+		width: 100%;
+		height: 100%;
+		/* border: 1px solid #a5a5a5; */
+		/* border-radius: 10px; */
+		padding: 5px;
+		filter: drop-shadow(8px 8px 8px #000000e1);
+	}
 
-
-  .layer {
-    position: absolute;
+  img {
     width: 100%;
     height: 100%;
-    border: 1px solid #a5a5a5;
-    border-radius: 10px;
-    padding: 5px;
+    /* border-radius: 5px; */
   }
 
-  .layer-one {
+
+  .layer:first-child {
     background-color: rgba(255, 255, 255, 0.158);
+		filter: drop-shadow(0);
   }
 
-  .layer-two {
-    transform: translateZ(15px);
-    filter: drop-shadow(8px 8px 8px #000000e1);
-  }
+	.side {
+		position: absolute;
+		width: 100%;
+		height: 100%;
+		background-color: black;
+	}
 
-  .layer-three {
-    transform: translateZ(30px);
-    filter: drop-shadow(8px 8px 8px #000000e1);
-  }
+	.left {
+		transform: rotateY(-90deg) translateZ(150px);
+		width: 45px;
+		left: 127.5px;
+		
+	}
+
+	.right {
+		transform: rotateY(90deg) translateZ(150px);;
+		width: 45px;
+		left: 127.5px;
+	}
+
+	.top {
+		transform: rotateX(-90deg) translateZ(252px);
+		height: 45px;
+		top: 229.5px;
+	}
+
+	.bottom {
+		transform: rotateX(90deg) translateZ(252px);
+		height: 45px;
+		top: 229.5px;
+	}
 </style>
