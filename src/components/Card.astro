@@ -51,14 +51,13 @@ gap = setGap(numberLayers, cardWidth)
 </div>
 
 <script>
-	import type { Dimensions } from "./Card.astro"
+	// import type { Dimensions } from "./Card.astro"
 
 	let wrapper = document.getElementById("wrapper")
 	let card = document.getElementById("card")
-	let rect = wrapper?.getBoundingClientRect()
+	// let rect = wrapper?.getBoundingClientRect()
 
-	let dim = rect && calculateDimension(rect)
-	document.getElementById("wrapper")?.addEventListener("mouseover", (event: MouseEvent) => {
+	wrapper?.addEventListener("mouseover", (event: MouseEvent) => {
 		const target = event.target
 		document.onmousemove = (event) => {
 			let x = event.x
@@ -66,37 +65,46 @@ gap = setGap(numberLayers, cardWidth)
 			if(card) card.style.transform = `rotate3d(${(x-390)/10}, ${(y-276)/10}, ${0.2}, 25deg)`
 		};
 	})
+	
+	// let dim = rect && calculateDimension(rect)
+	// function calculateDimension(rect: DOMRect): Dimensions {
+	// 	const { top, bottom, right, left } = rect
 
+	// 	return {
+	// 		top, bottom, right, left, 
+	// 		hMedium: (left + right)/2, 
+	// 		vMedium: (top + bottom)/2
+	// 	};
+	// }
 
-
-	function calculateDimension(rect: DOMRect): Dimensions {
-		const { top, bottom, right, left } = rect
-
-		return {
-			top, bottom, right, left, 
-			hMedium: (left + right)/2, 
-			vMedium: (top + bottom)/2
-		};
-	}
-
-	function isInside(dim: Dimensions, mouse: {x: number, y: number}) {
-		return (dim.left < mouse.x && mouse.x < dim.right) && (dim.top < mouse.y && mouse.y < dim.bottom)
-	}
+	// function isInside(dim: Dimensions, mouse: {x: number, y: number}) {
+	// 	return (dim.left < mouse.x && mouse.x < dim.right) && (dim.top < mouse.y && mouse.y < dim.bottom)
+	// }
 </script>
 <style>
+:root {
+	--sides-color: rgb(68, 68, 68);
+	--aspect-ratio: 1.68;
+	--card-width: 300px;
+	--card-height: calc(var(--card-width)*var(--aspect-ratio));
+	--card-thickness: 45px;
+	--center-sides: calc((var(--card-width) / 2) - var(--card-thickness) / 2);
+	--center-top-bottom: calc((var(--card-height) / 2) - var(--card-thickness) / 2);
+	--shadow-layers: drop-shadow(8px 8px 8px #000000e1);
+}
+
 	#wrapper {
-		width: 300px;
-		height: 504px
-		/* aspect-ratio: 1/1.68; */
-		perspective: 50px;
+		width: var(--card-width);
+		height: var(--card-height);
+		perspective: 1000px;
 	}
 	
 	.card {
 		width: 100%;
-		/* height: 100%; */
-    aspect-ratio: 1/1.68;
+		height: 100%;
 		position: relative;
     transform-style: preserve-3d;
+		transform: translateZ(-100px);
   }
 
 	.layer {
@@ -107,18 +115,17 @@ gap = setGap(numberLayers, cardWidth)
 		/* border: 1px solid #a5a5a5; */
 		/* border-radius: 10px; */
 		padding: 5px;
-		filter: drop-shadow(8px 8px 8px #000000e1);
+		filter: var(--shadow-layers);
 	}
 
   img {
     width: 100%;
     height: 100%;
-    /* border-radius: 5px; */
+    border-radius: 5px;
   }
 
-
   .layer:first-child {
-    background-color: rgba(255, 255, 255, 0.158);
+    background-color: var(--sides-color);
 		filter: drop-shadow(0);
   }
 
@@ -126,31 +133,30 @@ gap = setGap(numberLayers, cardWidth)
 		position: absolute;
 		width: 100%;
 		height: 100%;
-		background-color: black;
+		background-color: var(--sides-color);
 	}
 
 	.left {
-		transform: rotateY(-90deg) translateZ(150px);
-		width: 45px;
-		left: 127.5px;
-		
+		transform: rotateY(-90deg) translateZ(calc(var(--card-width) / 2));
+		width: var(--card-thickness);
+		left: var(--center-sides);
 	}
 
 	.right {
-		transform: rotateY(90deg) translateZ(150px);;
-		width: 45px;
-		left: 127.5px;
+		transform: rotateY(90deg) translateZ(calc(var(--card-width) / 2));
+		width: var(--card-thickness);
+		left: var(--center-sides);
 	}
 
 	.top {
-		transform: rotateX(-90deg) translateZ(252px);
-		height: 45px;
-		top: 229.5px;
+		transform: rotateX(-90deg) translateZ(calc(var(--card-height) / 2));
+		height: var(--card-thickness);
+		top: var(--center-top-bottom);
 	}
 
 	.bottom {
-		transform: rotateX(90deg) translateZ(252px);
-		height: 45px;
-		top: 229.5px;
+		transform: rotateX(90deg) translateZ(calc(var(--card-height) / 2));
+		height: var(--card-thickness);
+		top: var(--center-top-bottom);
 	}
 </style>
